@@ -16,6 +16,6 @@ public class CustomerRegistrationController {
 
   @PutMapping
   public void registerNewCustomer(@Valid @RequestBody CustomerRegistrationRequest request) {
-    // registrationService.registerNewCustomer(null);
+    throw new UnsupportedOperationException();
   }
 }

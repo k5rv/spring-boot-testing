@@ -16,7 +16,7 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(value = "id", allowGetters = true)
+//@JsonIgnoreProperties(value = "id", allowGetters = true)
 public class Customer {
   @NotNull @Id private UUID id;
 

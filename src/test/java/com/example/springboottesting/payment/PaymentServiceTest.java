@@ -50,9 +50,10 @@ class PaymentServiceTest {
 
     given(
             cardPaymentCharger.chargeCard(
-                    payment.getSource(), payment.getAmount(),
+                payment.getSource(),
+                payment.getAmount(),
                 payment.getCurrency(),
-                    payment.getDescription()))
+                payment.getDescription()))
         .willReturn(new CardPaymentCharge(true));
 
     // When
@@ -83,15 +84,16 @@ class PaymentServiceTest {
 
     given(
             cardPaymentCharger.chargeCard(
-                    paymentRequest.payment().getSource(), paymentRequest.payment().getAmount(),
+                paymentRequest.payment().getSource(),
+                paymentRequest.payment().getAmount(),
                 paymentRequest.payment().getCurrency(),
-                    paymentRequest.payment().getDescription()))
+                paymentRequest.payment().getDescription()))
         .willReturn(new CardPaymentCharge(false));
 
     // When and Then
     assertThatThrownBy(() -> underTest.chargeCard(customerId, paymentRequest))
         .isInstanceOf(IllegalStateException.class)
-        .hasMessage("Card not debited for customer [ " + customerId + " ]");
+        .hasMessage("Card not debited for customer [" + customerId + "]");
     then(paymentRepository).should(never()).save(any(Payment.class));
   }
 

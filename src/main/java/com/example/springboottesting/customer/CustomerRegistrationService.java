@@ -1,5 +1,6 @@
 package com.example.springboottesting.customer;
 
+import com.example.springboottesting.utils.PhoneNumberValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,14 @@ import java.util.UUID;
 public class CustomerRegistrationService {
 
   private final CustomerRepository customerRepository;
+  private final PhoneNumberValidator phoneNumberValidator;
 
   public void registerNewCustomer(CustomerRegistrationRequest request) {
     String phoneNumber = request.customer().getPhoneNumber();
+    boolean isValidPhoneNumber = phoneNumberValidator.test(phoneNumber);
+    if (!isValidPhoneNumber) {
+      throw new IllegalStateException("phone number [" + phoneNumber + "] is not valid");
+    }
     Optional<Customer> customerOptional =
         customerRepository.selectCustomerByPhoneNumber(phoneNumber);
     if (customerOptional.isPresent()) {

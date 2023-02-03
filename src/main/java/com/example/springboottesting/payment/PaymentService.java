@@ -44,7 +44,7 @@ public class PaymentService {
 
     boolean isCardDebited = cardPaymentCharge.isCardDebited();
     if (!isCardDebited) {
-      throw new IllegalStateException("Card not debited for customer [ " + customerId + " ]");
+      throw new IllegalStateException("Card not debited for customer [" + customerId + "]");
     }
 
     payment.setCustomerId(customerId);

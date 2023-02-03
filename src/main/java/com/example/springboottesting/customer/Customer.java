@@ -1,6 +1,5 @@
 package com.example.springboottesting.customer;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonIgnoreProperties(value = "id", allowGetters = true)
+// @JsonIgnoreProperties(value = "id", allowGetters = true)
 public class Customer {
   @NotNull @Id private UUID id;
 

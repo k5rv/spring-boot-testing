@@ -1,9 +1,10 @@
 package com.example.springboottesting.payment;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/payments")
@@ -12,9 +13,8 @@ public class PaymentController {
 
   private final PaymentService paymentService;
 
-  @PutMapping("/{customerId}")
-  public void makePayment(
-      @PathVariable UUID customerId, @RequestBody PaymentRequest paymentRequest) {
-    paymentService.chargeCard(customerId, paymentRequest);
+  @PostMapping
+  public void makePayment(@RequestBody PaymentRequest paymentRequest) {
+    paymentService.chargeCard(paymentRequest.payment().getCustomerId(), paymentRequest);
   }
 }

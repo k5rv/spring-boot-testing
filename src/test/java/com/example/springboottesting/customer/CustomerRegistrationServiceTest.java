@@ -1,5 +1,6 @@
 package com.example.springboottesting.customer;
 
+import com.example.springboottesting.utils.PhoneNumberValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.never;
 class CustomerRegistrationServiceTest {
 
   @Mock private CustomerRepository customerRepository;
+  @Mock private PhoneNumberValidator phoneNumberValidator;
 
   @Captor private ArgumentCaptor<Customer> customerArgumentCaptor;
   private CustomerRegistrationService underTest;
@@ -27,7 +29,7 @@ class CustomerRegistrationServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    underTest = new CustomerRegistrationService(customerRepository);
+    underTest = new CustomerRegistrationService(customerRepository, phoneNumberValidator);
   }
 
   @Test
@@ -36,6 +38,7 @@ class CustomerRegistrationServiceTest {
     String phoneNumber = "00099";
     Customer customer = new Customer(UUID.randomUUID(), "Maryam", phoneNumber);
     CustomerRegistrationRequest request = new CustomerRegistrationRequest(customer);
+    given(phoneNumberValidator.test(phoneNumber)).willReturn(true);
     given(customerRepository.selectCustomerByPhoneNumber(phoneNumber)).willReturn(Optional.empty());
     // When
     underTest.registerNewCustomer(request);
@@ -52,6 +55,7 @@ class CustomerRegistrationServiceTest {
     UUID id = UUID.randomUUID();
     Customer customer = new Customer(id, "Maryam", phoneNumber);
     CustomerRegistrationRequest request = new CustomerRegistrationRequest(customer);
+    given(phoneNumberValidator.test(phoneNumber)).willReturn(true);
     given(customerRepository.selectCustomerByPhoneNumber(phoneNumber))
         .willReturn(Optional.of(customer));
     // When
@@ -69,6 +73,7 @@ class CustomerRegistrationServiceTest {
     Customer customer = new Customer(id, "Maryam", phoneNumber);
     Customer customerTwo = new Customer(id, "John", phoneNumber);
     CustomerRegistrationRequest request = new CustomerRegistrationRequest(customer);
+    given(phoneNumberValidator.test(phoneNumber)).willReturn(true);
     given(customerRepository.selectCustomerByPhoneNumber(phoneNumber))
         .willReturn(Optional.of(customerTwo));
     // When Then
@@ -80,11 +85,27 @@ class CustomerRegistrationServiceTest {
   }
 
   @Test
-  void itShouldSaveNewCustomerWhenIdIsNull() {
+  void itShouldThrowWhenPhoneNumberIsNotValid() {
     // Given
     String phoneNumber = "00099";
     Customer customer = new Customer(UUID.randomUUID(), "Maryam", phoneNumber);
     CustomerRegistrationRequest request = new CustomerRegistrationRequest(customer);
+    given(phoneNumberValidator.test(phoneNumber)).willReturn(false);
+    // Then
+    assertThatThrownBy(() -> underTest.registerNewCustomer(request))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("phone number [" + phoneNumber + "] is not valid");
+    // Then
+    then(customerRepository).should(never()).save(any(Customer.class));
+  }
+
+  @Test
+  void itShouldSaveNewCustomerWhenIdIsNull() {
+    // Given
+    String phoneNumber = "00099";
+    Customer customer = new Customer(null, "Maryam", phoneNumber);
+    CustomerRegistrationRequest request = new CustomerRegistrationRequest(customer);
+    given(phoneNumberValidator.test(phoneNumber)).willReturn(true);
     given(customerRepository.selectCustomerByPhoneNumber(phoneNumber)).willReturn(Optional.empty());
     // When
     underTest.registerNewCustomer(request);

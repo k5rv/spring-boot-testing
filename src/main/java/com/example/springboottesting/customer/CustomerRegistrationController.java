@@ -16,7 +16,8 @@ public class CustomerRegistrationController {
   private final CustomerRegistrationService customerRegistrationService;
 
   @PutMapping
-  public void registerNewCustomer(@RequestBody CustomerRegistrationRequest request) {
-    customerRegistrationService.registerNewCustomer(request);
+  public void registerNewCustomer(
+      @RequestBody CustomerRegistrationRequest customerRegistrationRequest) {
+    customerRegistrationService.registerNewCustomer(customerRegistrationRequest);
   }
 }
